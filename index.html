@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CivisIntel — Predictive Structural Intelligence for Public Infrastructure</title>
+<meta name="description" content="CivisIntel's AI processes sensor data from bridges, tunnels, and highways to predict structural failures up to 12 months in advance — saving cities millions and protecting lives.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   TOKENS — Civil Precision Light
+═══════════════════════════════════════ */
+:root{
+  /* Light surfaces */
+  --void:      #F8FAFB;
+  --deep:      #EFF3F7;
+  --surface:   #FFFFFF;
+  --surface-2: #F4F7F9;
+  --surface-3: #E8EEF4;
+  --border:    rgba(15,36,25,.09);
+  --border-md: rgba(15,36,25,.16);
+  /* Brand greens — deeper, institutional */
+  --green:     #006B4F;
+  --green-lt:  #00A878;
+  --green-dk:  #004D38;
+  --green-glow:rgba(0,107,79,.20);
+  /* Accent */
+  --amber:     #D97706;
+  --amber-lt:  #F59E0B;
+  --amber-glow:rgba(217,119,6,.2);
+  --cobalt:    #1D4ED8;
+  --cobalt-lt: #2563EB;
+  --rose:      #DC2626;
+  --rose-lt:   #EF4444;
+  /* Text — all dark on light */
+  --white:     #0F2419;      /* "white" = ink on light bg  */
+  --white-70:  rgba(15,36,25,.70);
+  --white-40:  rgba(15,36,25,.45);
+  --white-20:  rgba(15,36,25,.22);
+  --white-10:  rgba(15,36,25,.10);
+  --white-06:  rgba(15,36,25,.06);
+  --f-display: 'Space Grotesk',sans-serif;
+  --f-body:    'Inter',sans-serif;
+  --f-mono:    'JetBrains Mono',monospace;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
+body{background:var(--deep);color:var(--white);font-family:var(--f-body);overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+img{display:block;max-width:100%;}
+button{font-family:inherit;cursor:pointer;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--deep);}
+::-webkit-scrollbar-thumb{background:var(--green-lt);border-radius:2px;}
+
+/* ═══════════════════════════════════════
+   NAV
+═══════════════════════════════════════ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  height:66px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 52px;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  transition:border-color .3s,box-shadow .3s;
+}
+.nav.scrolled{border-color:var(--border-md);box-shadow:0 2px 24px rgba(15,36,25,.10);}
+
+.nav-logo{display:flex;align-items:center;gap:11px;}
+.logo-svg-wrap{width:38px;height:38px;flex-shrink:0;}
+.logo-wordmark{
+  font-family:var(--f-display);
+  font-size:18px;font-weight:700;letter-spacing:-.03em;
+  color:var(--white);
+}
+.logo-wordmark span{
+  background:linear-gradient(90deg,var(--green),var(--cobalt-lt));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+/* ─── Nav links on light bg ─── */
+.nav-links a{color:var(--white-40);}
+.nav-links a:hover{color:var(--white);}
+.btn-ghost-nav{color:var(--white-40);}
+.btn-ghost-nav:hover{background:var(--white-06);color:var(--white);}
+
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none;}
+.nav-links a{
+  font-family:var(--f-body);font-size:13.5px;font-weight:500;
+  color:var(--white-40);letter-spacing:.01em;transition:color .2s;
+}
+.nav-links a:hover{color:var(--white);}
+
+.nav-right{display:flex;align-items:center;gap:10px;}
+.btn-ghost-nav{
+  font-family:var(--f-body);font-size:13.5px;font-weight:500;
+  color:var(--white-40);background:none;border:none;
+  padding:8px 14px;border-radius:8px;transition:all .2s;
+}
+.btn-ghost-nav:hover{background:var(--white-06);color:var(--white);}
+.btn-nav-cta{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--green);color:var(--void);
+  font-family:var(--f-body);font-size:13.5px;font-weight:700;
+  padding:9px 20px;border-radius:9px;border:none;
+  transition:all .2s;white-space:nowrap;
+}
+.btn-nav-cta:hover{background:var(--green-lt);transform:translateY(-1px);box-shadow:0 4px 18px var(--green-glow);}
+
+/* Hamburger */
+.hamburger{
+  display:none;flex-direction:column;gap:5px;
+  background:none;border:none;padding:5px;z-index:400;position:relative;
+}
+.hamburger span{
+  display:block;width:22px;height:1.5px;
+  background:var(--white);border-radius:2px;
+  transition:all .3s;transform-origin:center;
+}
+/* on light nav, hamburger bars are dark */
+@media(max-width:1024px){
+  .hamburger span{background:var(--white);}
+}
+.hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+
+/* Mobile menu */
+.mobile-menu{
+  display:none;position:fixed;inset:0;z-index:250;
+  background:rgba(248,250,251,.97);backdrop-filter:blur(24px);
+  flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+  border-top:3px solid var(--green);
+}
+.mobile-menu.open{display:flex;opacity:1;pointer-events:all;}
+.mob-links{list-style:none;display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;padding:0 32px;}
+.mob-links li a{
+  display:block;
+  font-family:var(--f-display);font-size:28px;font-weight:700;letter-spacing:-.03em;
+  color:rgba(15,36,25,.35);padding:12px 24px;border-radius:12px;
+  text-align:center;width:100%;transition:all .2s;
+}
+.mob-links li a:hover{color:var(--green);background:rgba(0,107,79,.06);}
+.mob-cta-btn{
+  margin-top:36px;
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--green);color:#fff;
+  font-family:var(--f-body);font-size:16px;font-weight:700;
+  padding:14px 36px;border-radius:12px;border:none;transition:all .2s;
+}
+.mob-cta-btn:hover{background:var(--green-lt);}
+
+/* ═══════════════════════════════════════
+   HERO — Light base, redesigned
+═══════════════════════════════════════ */
+.hero{
+  position:relative;min-height:100vh;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;gap:64px;
+  padding:120px 52px 80px;
+  overflow:hidden;
+  background:#FFFFFF;
+}
+
+/* Subtle blueprint grid on white */
+.hero::before{
+  content:'';position:absolute;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(0,107,79,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,107,79,.05) 1px,transparent 1px),
+    linear-gradient(rgba(0,107,79,.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,107,79,.02) 1px,transparent 1px);
+  background-size:80px 80px,80px 80px,20px 20px,20px 20px;
+}
+
+/* Right-side radial teal wash */
+.hero::after{
+  content:'';position:absolute;inset:0;z-index:0;
+  background:radial-gradient(ellipse 55% 80% at 80% 50%,rgba(0,107,79,.05) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.hero-left{position:relative;z-index:2;}
+.hero-right{position:relative;z-index:2;}
+
+/* Status pill */
+.hero-status{
+  display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--green);
+  background:rgba(0,107,79,.07);border:1px solid rgba(0,107,79,.18);
+  padding:6px 14px;border-radius:100px;
+  margin-bottom:28px;width:fit-content;
+}
+.status-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 1.6s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.6);}}
+.status-ring{
+  width:16px;height:16px;border-radius:50%;
+  border:1.5px solid rgba(0,107,79,.35);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;animation:ringPulse 1.6s infinite;
+}
+@keyframes ringPulse{0%,100%{border-color:rgba(0,107,79,.3);}50%{border-color:rgba(0,107,79,.85);}}
+
+/* Headline */
+.hero-h1{
+  font-family:var(--f-display);
+  font-size:clamp(42px,5.5vw,80px);
+  font-weight:700;letter-spacing:-.04em;line-height:.94;
+  color:#0A1C12;margin-bottom:12px;
+}
+.hero-h1 .g{
+  background:linear-gradient(90deg,var(--green) 0%,#1D4ED8 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.hero-sub-tag{
+  font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;
+  color:var(--white-40);text-transform:uppercase;
+  margin-bottom:24px;display:flex;align-items:center;gap:10px;
+}
+.hero-sub-tag::before{content:'';width:22px;height:1.5px;background:rgba(15,36,25,.18);}
+
+.hero-p{
+  font-size:clamp(15px,1.4vw,17.5px);line-height:1.72;
+  color:rgba(15,36,25,.58);max-width:480px;margin-bottom:44px;
+}
+
+.hero-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:52px;}
+
+.btn-primary{
+  display:inline-flex;align-items:center;gap:9px;
+  background:var(--green);color:#fff;
+  font-family:var(--f-body);font-size:15px;font-weight:700;
+  padding:14px 28px;border-radius:10px;border:none;transition:all .25s;
+}
+.btn-primary:hover{background:var(--green-lt);transform:translateY(-2px);box-shadow:0 8px 28px var(--green-glow);}
+
+.btn-outline{
+  display:inline-flex;align-items:center;gap:9px;
+  background:transparent;color:rgba(15,36,25,.65);
+  font-family:var(--f-body);font-size:15px;font-weight:500;
+  padding:13px 24px;border-radius:10px;
+  border:1.5px solid rgba(15,36,25,.18);transition:all .25s;
+}
+.btn-outline:hover{border-color:var(--green);color:var(--green);}
+
+/* Trust chips — light */
+.hero-trust{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.trust-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;color:rgba(15,36,25,.5);
+  background:#F4F7F5;border:1px solid rgba(0,107,79,.14);
+  padding:5px 12px;border-radius:6px;
+}
+
+/* ─── SENSOR DASHBOARD MOCKUP — light ─── */
+.sensor-dashboard{
+  background:#FFFFFF;
+  border:1px solid rgba(15,36,25,.12);
+  border-radius:18px;overflow:hidden;
+  box-shadow:
+    0 2px 4px rgba(15,36,25,.04),
+    0 8px 24px rgba(15,36,25,.08),
+    0 24px 60px rgba(15,36,25,.10);
+}
+.sd-topbar{
+  background:#F4F7F5;
+  padding:13px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(15,36,25,.08);
+}
+.sd-dots{display:flex;gap:6px;}
+.sd-dot{width:10px;height:10px;border-radius:50%;}
+.sdd-r{background:#FF5F56;}.sdd-y{background:#FFBD2E;}.sdd-g{background:#27C93F;}
+.sd-title{font-family:var(--f-mono);font-size:10px;color:rgba(15,36,25,.35);letter-spacing:.1em;}
+.sd-live{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--f-mono);font-size:10px;color:var(--green);letter-spacing:.08em;
+}
+.sd-live-dot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:pulse 1.4s infinite;}
+
+/* Structure ID bar */
+.sd-struct-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 20px;background:#F8FAF9;
+  border-bottom:1px solid rgba(15,36,25,.08);
+}
+.sd-struct-id{
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;
+  color:var(--green);display:flex;align-items:center;gap:8px;
+}
+.sd-struct-name{font-family:var(--f-mono);font-size:10px;color:rgba(15,36,25,.35);letter-spacing:.06em;}
+.sd-health{
+  font-family:var(--f-display);font-size:17px;font-weight:700;
+  letter-spacing:-.02em;color:var(--green);
+}
+
+/* Sensor feed rows */
+.sd-feeds{padding:12px 16px;display:flex;flex-direction:column;gap:8px;}
+.sd-feed{
+  background:#F8FAF9;border:1px solid rgba(15,36,25,.08);
+  border-radius:8px;padding:10px 14px;
+}
+.sd-feed-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:8px;
+}
+.sd-feed-label{
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(15,36,25,.35);
+}
+.sd-feed-val{font-family:var(--f-mono);font-size:12px;font-weight:500;}
+.sd-feed-status{
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;
+  text-transform:uppercase;padding:2px 8px;border-radius:4px;border:1px solid;
+}
+.status-normal  {color:#065F46;border-color:rgba(0,107,79,.25);background:rgba(0,107,79,.07);}
+.status-elevated{color:#92400E;border-color:rgba(217,119,6,.25);background:rgba(245,158,11,.07);}
+.status-alert   {color:#991B1B;border-color:rgba(220,38,38,.25);background:rgba(220,38,38,.07);}
+
+/* Waveform canvases */
+.waveform-wrap{height:36px;position:relative;overflow:hidden;}
+.waveform-canvas{width:100%;height:100%;}
+
+/* Alert panel */
+.sd-alert{
+  margin:0 16px 12px;
+  padding:10px 14px;
+  background:rgba(220,38,38,.05);
+  border:1px solid rgba(220,38,38,.18);
+  border-radius:8px;
+  display:flex;align-items:center;gap:10px;
+}
+.sd-alert-icon{color:#DC2626;flex-shrink:0;}
+.sd-alert-title{font-size:12px;font-weight:600;color:#DC2626;margin-bottom:2px;}
+.sd-alert-desc{font-size:11px;color:rgba(15,36,25,.55);}
+
+/* Prediction bar */
+.sd-prediction{
+  padding:12px 16px;
+  background:rgba(0,107,79,.06);
+  border-top:1px solid rgba(0,107,79,.14);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sdp-label{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--green);
+  display:flex;align-items:center;gap:7px;
+}
+.sdp-val{
+  font-family:var(--f-display);font-size:18px;font-weight:700;
+  letter-spacing:-.02em;color:var(--green);
+}
+
+/* Hero stat strip */
+.hero-stat-row{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:rgba(15,36,25,.1);
+  border:1px solid rgba(15,36,25,.1);border-top:none;
+  border-radius:0 0 14px 14px;overflow:hidden;
+}
+.hstat{background:#FAFCFB;padding:16px 18px;}
+.hstat-num{
+  font-family:var(--f-display);font-size:24px;font-weight:700;
+  letter-spacing:-.03em;color:#0A1C12;line-height:1;margin-bottom:4px;
+}
+.hstat-num .gc{color:var(--green);}
+.hstat-lbl{font-family:var(--f-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(15,36,25,.42);}
+
+/* ═══════════════════════════════════════
+   SHARED
+═══════════════════════════════════════ */
+.sec-pad{padding:108px 0;}
+.wrap{max-width:1160px;margin:0 auto;padding:0 52px;}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--f-mono);font-size:11px;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--green);margin-bottom:18px;
+}
+.eyebrow::before{content:'';width:18px;height:1.5px;background:var(--green);border-radius:1px;}
+.eyebrow-lt{color:var(--green-lt);}
+.eyebrow-lt::before{background:var(--green-lt);}
+
+.sh2{
+  font-family:var(--f-display);
+  font-size:clamp(28px,3.5vw,50px);
+  font-weight:700;letter-spacing:-.04em;line-height:1.02;
+  color:var(--white);margin-bottom:16px;
+}
+.sh2 .gc{color:var(--green);}
+.sh2 .ga{color:var(--amber);}
+.sh2 .gb{color:var(--cobalt-lt);}
+
+.ssub{font-size:17px;line-height:1.7;color:var(--white-40);max-width:520px;}
+
+.rv{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease;}
+.rv.in{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.06s;}.d2{transition-delay:.12s;}.d3{transition-delay:.18s;}
+.d4{transition-delay:.24s;}.d5{transition-delay:.30s;}.d6{transition-delay:.36s;}
+
+/* ═══════════════════════════════════════
+   STAKES / PROBLEM
+═══════════════════════════════════════ */
+.stakes-sec{
+  background:var(--deep);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.stakes-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:2px;
+  margin-top:64px;
+}
+.stakes-panel{padding:56px;}
+.stakes-panel.before{background:#EAEEF2;border:1px solid rgba(15,36,25,.1);}
+.stakes-panel.after{
+  background:linear-gradient(135deg,rgba(0,107,79,.08) 0%,rgba(29,78,216,.04) 100%);
+  border:1px solid rgba(0,107,79,.18);
+}
+.stakes-tag{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;margin-bottom:28px;padding-bottom:16px;
+  border-bottom:1px solid rgba(15,36,25,.12);
+}
+.stakes-panel.before .stakes-tag{color:rgba(15,36,25,.35);}
+.stakes-panel.after  .stakes-tag{color:var(--green);}
+
+.stakes-items{display:flex;flex-direction:column;gap:16px;}
+.stakes-item{
+  display:flex;align-items:flex-start;gap:14px;
+  font-size:14px;line-height:1.55;
+}
+.stakes-panel.before .stakes-item{color:rgba(15,36,25,.52);}
+.stakes-panel.after  .stakes-item{color:rgba(15,36,25,.75);}
+
+.si-icon{
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+}
+.si-x{background:rgba(220,38,38,.12);}
+.si-x svg{color:#DC2626;}
+.si-check{background:rgba(0,107,79,.12);}
+.si-check svg{color:var(--green);}
+
+/* ═══════════════════════════════════════
+   HOW IT WORKS
+═══════════════════════════════════════ */
+.how-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:0;position:relative;margin-top:64px;
+}
+.how-grid::before{
+  content:'';position:absolute;
+  top:28px;left:12.5%;right:12.5%;
+  height:1px;
+  background:linear-gradient(90deg,var(--green),var(--cobalt-lt),var(--green));
+  opacity:.25;z-index:0;
+}
+.how-step{
+  padding:0 20px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;
+  position:relative;z-index:1;
+}
+.how-bubble{
+  width:58px;height:58px;border-radius:50%;
+  border:1.5px solid rgba(0,107,79,.28);
+  background:#FFFFFF;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-display);font-size:20px;font-weight:700;
+  color:var(--green);margin-bottom:22px;transition:all .3s;
+  box-shadow:0 2px 8px rgba(0,107,79,.1);
+}
+.how-step:hover .how-bubble{
+  background:var(--green);color:#fff;
+  border-color:var(--green);box-shadow:0 0 0 8px rgba(0,107,79,.08);
+}
+.how-title{
+  font-family:var(--f-display);font-size:16px;font-weight:600;
+  letter-spacing:-.02em;color:#0A1C12;margin-bottom:8px;
+}
+.how-desc{font-size:13px;line-height:1.6;color:var(--white-40);}
+
+/* ═══════════════════════════════════════
+   CAPABILITIES
+═══════════════════════════════════════ */
+.cap-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:2px;margin-top:64px;
+}
+.cap-card{
+  padding:42px;background:#FFFFFF;
+  border:1px solid rgba(15,36,25,.1);
+  position:relative;overflow:hidden;
+  transition:border-color .25s,box-shadow .25s;
+}
+.cap-card:hover{border-color:rgba(0,107,79,.25);box-shadow:0 8px 32px rgba(0,107,79,.08);}
+.cap-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--green),#1D4ED8,transparent);
+  transform:scaleX(0);transform-origin:left;transition:transform .4s;
+}
+.cap-card:hover::before{transform:scaleX(1);}
+.cap-card::after{
+  content:attr(data-id);
+  position:absolute;bottom:16px;right:18px;
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;
+  color:rgba(0,107,79,.1);pointer-events:none;
+}
+.cap-icon{
+  width:44px;height:44px;border-radius:11px;
+  background:rgba(0,107,79,.08);border:1px solid rgba(0,107,79,.16);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--green);margin-bottom:22px;
+}
+.cap-title{
+  font-family:var(--f-display);font-size:18px;font-weight:600;
+  letter-spacing:-.03em;color:#0A1C12;margin-bottom:10px;
+}
+.cap-desc{font-size:13.5px;line-height:1.7;color:rgba(15,36,25,.55);}
+.cap-tag{
+  display:inline-block;margin-top:16px;
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;
+  padding:3px 10px;border-radius:4px;border:1px solid;
+}
+.ct-green {color:var(--green-dk);border-color:rgba(0,107,79,.25);background:rgba(0,107,79,.06);}
+.ct-amber {color:#92400E;border-color:rgba(217,119,6,.25);background:rgba(217,119,6,.06);}
+.ct-cobalt{color:#1D4ED8;border-color:rgba(29,78,216,.25);background:rgba(29,78,216,.06);}
+
+/* ═══════════════════════════════════════
+   METRICS / WHY — keeps dark band for contrast
+═══════════════════════════════════════ */
+.metrics-outer{
+  background:#0F2419;
+  border-top:1px solid rgba(0,107,79,.3);
+  border-bottom:1px solid rgba(0,107,79,.3);
+}
+.metrics-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:rgba(255,255,255,.07);margin-top:64px;
+}
+.metric-item{
+  background:#0F2419;padding:40px 32px;
+  position:relative;overflow:hidden;transition:background .25s;
+}
+.metric-item:hover{background:#162E1F;}
+.metric-item::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--green-lt),transparent);
+  transform:scaleX(0);transform-origin:left;transition:transform .4s;
+}
+.metric-item:hover::before{transform:scaleX(1);}
+.m-num{
+  font-family:var(--f-display);font-size:50px;font-weight:700;
+  letter-spacing:-.04em;line-height:1;color:#FFFFFF;margin-bottom:7px;
+}
+.m-num .gc{color:var(--green-lt);}
+.m-lbl{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);}
+
+.why-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:2px;margin-top:2px;
+}
+.why-card{
+  padding:44px;background:#0F2419;
+  display:flex;gap:18px;align-items:flex-start;
+  transition:background .2s;
+}
+.why-card:hover{background:#162E1F;}
+.why-idx{
+  font-family:var(--f-display);font-size:54px;font-weight:700;
+  letter-spacing:.01em;color:rgba(255,255,255,.06);
+  line-height:1;flex-shrink:0;min-width:52px;margin-top:-4px;
+}
+.why-title{
+  font-family:var(--f-display);font-size:19px;font-weight:600;
+  letter-spacing:-.03em;color:#FFFFFF;margin-bottom:10px;
+}
+.why-desc{font-size:14px;line-height:1.7;color:rgba(255,255,255,.5);}
+
+/* ═══════════════════════════════════════
+   WHO WE SERVE
+═══════════════════════════════════════ */
+.serve-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;margin-top:64px;
+}
+.serve-card{
+  background:#FFFFFF;border:1.5px solid rgba(15,36,25,.1);
+  border-radius:14px;padding:34px;transition:all .25s;
+}
+.serve-card:hover{
+  border-color:rgba(0,107,79,.25);transform:translateY(-3px);
+  box-shadow:0 14px 40px rgba(0,107,79,.10);
+}
+.serve-icon{
+  width:42px;height:42px;border-radius:10px;
+  background:rgba(0,107,79,.07);border:1px solid rgba(0,107,79,.15);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--green);margin-bottom:18px;transition:all .25s;
+}
+.serve-card:hover .serve-icon{background:rgba(0,107,79,.13);border-color:rgba(0,107,79,.28);}
+.serve-title{
+  font-family:var(--f-display);font-size:16px;font-weight:600;
+  letter-spacing:-.02em;color:#0A1C12;margin-bottom:8px;
+}
+.serve-desc{font-size:13px;line-height:1.65;color:rgba(15,36,25,.55);}
+.serve-chip{
+  display:inline-block;margin-top:14px;
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;
+  padding:3px 10px;border-radius:4px;
+  color:var(--green-dk);border:1px solid rgba(0,107,79,.22);background:rgba(0,107,79,.06);
+}
+
+/* ═══════════════════════════════════════
+   CASE STUDY
+═══════════════════════════════════════ */
+.case-box{
+  background:linear-gradient(135deg,rgba(0,107,79,.08) 0%,rgba(29,78,216,.04) 100%);
+  border:1.5px solid rgba(0,107,79,.18);
+  border-radius:20px;padding:72px 80px;
+  position:relative;overflow:hidden;margin-top:60px;
+}
+.case-box::before{
+  content:'"';
+  position:absolute;top:-20px;left:60px;
+  font-family:var(--f-display);font-size:240px;font-weight:700;
+  color:rgba(0,107,79,.06);line-height:1;pointer-events:none;
+}
+.case-grid{display:grid;grid-template-columns:1fr auto;gap:72px;align-items:start;}
+.case-quote{
+  font-family:var(--f-display);
+  font-size:clamp(17px,2vw,24px);font-weight:500;
+  line-height:1.48;color:rgba(15,36,25,.72);
+  font-style:italic;letter-spacing:-.01em;margin-bottom:32px;
+}
+.case-attr{display:flex;align-items:center;gap:14px;}
+.case-av{
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,var(--green),#1D4ED8);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-display);font-size:16px;font-weight:700;
+  color:#fff;flex-shrink:0;
+}
+.case-name{font-size:14px;font-weight:600;color:#0A1C12;margin-bottom:2px;}
+.case-role{font-size:12px;color:rgba(15,36,25,.5);}
+.case-stats{display:flex;flex-direction:column;gap:22px;flex-shrink:0;min-width:180px;}
+.cs-stat-num{
+  font-family:var(--f-display);font-size:42px;font-weight:700;
+  letter-spacing:-.04em;line-height:1;
+  background:linear-gradient(90deg,var(--green),#1D4ED8);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;margin-bottom:4px;
+}
+.cs-stat-lbl{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(15,36,25,.35);}
+
+/* ═══════════════════════════════════════
+   PRICING
+═══════════════════════════════════════ */
+.pricing-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:20px;align-items:start;margin-top:64px;
+}
+.price-card{
+  border:1.5px solid rgba(15,36,25,.12);
+  border-radius:16px;padding:40px;
+  background:#FFFFFF;position:relative;
+  transition:all .25s;
+}
+.price-card:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,107,79,.10);}
+.price-card.featured{
+  background:linear-gradient(160deg,rgba(0,107,79,.07) 0%,rgba(29,78,216,.04) 100%);
+  border-color:rgba(0,107,79,.28);transform:scale(1.02);
+}
+.price-card.featured:hover{transform:scale(1.02) translateY(-3px);}
+.pop-badge{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(90deg,var(--green),#1D4ED8);
+  color:#fff;font-family:var(--f-mono);font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 16px;border-radius:100px;white-space:nowrap;
+}
+.price-tier{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--green);margin-bottom:16px;
+}
+.price-card.featured .price-tier{color:var(--green-dk);}
+.price-amt{display:flex;align-items:baseline;gap:4px;margin-bottom:8px;}
+.price-curr{font-size:20px;font-weight:600;color:rgba(15,36,25,.35);}
+.price-num{
+  font-family:var(--f-display);font-size:52px;font-weight:700;
+  letter-spacing:-.04em;line-height:1;color:#0A1C12;
+}
+.price-per{font-size:14px;color:rgba(15,36,25,.35);}
+.price-desc{
+  font-size:14px;line-height:1.6;color:rgba(15,36,25,.55);
+  margin-bottom:28px;padding-bottom:28px;
+  border-bottom:1px solid rgba(15,36,25,.1);
+}
+.price-card.featured .price-desc{border-color:rgba(0,107,79,.15);}
+.price-feats{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:32px;}
+.price-feat{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:rgba(15,36,25,.7);}
+.pf-ck{
+  width:18px;height:18px;border-radius:50%;
+  background:rgba(0,107,79,.1);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;color:var(--green);
+}
+.btn-price{
+  display:block;width:100%;padding:13px 24px;border-radius:10px;
+  text-align:center;font-family:var(--f-body);font-size:14px;font-weight:600;
+  border:none;transition:all .2s;letter-spacing:-.01em;cursor:pointer;
+}
+.btn-price-out{
+  background:transparent;color:rgba(15,36,25,.65);
+  border:1.5px solid rgba(15,36,25,.18);
+}
+.btn-price-out:hover{border-color:var(--green);color:var(--green);}
+.btn-price-fill{
+  background:var(--green);color:#fff;
+}
+.btn-price-fill:hover{background:var(--green-lt);box-shadow:0 4px 20px var(--green-glow);}
+
+/* ═══════════════════════════════════════
+   FAQ
+═══════════════════════════════════════ */
+.faq-list{
+  display:flex;flex-direction:column;
+  margin-top:64px;border-top:1px solid rgba(15,36,25,.1);
+}
+.faq-item{border-bottom:1px solid rgba(15,36,25,.1);}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:22px 0;cursor:pointer;
+  font-family:var(--f-display);font-size:16px;font-weight:600;
+  letter-spacing:-.01em;color:rgba(15,36,25,.65);
+  transition:color .2s;list-style:none;user-select:none;
+}
+.faq-q:hover{color:#0A1C12;}
+.faq-q::after{
+  content:'';width:20px;height:20px;flex-shrink:0;
+  border:1px solid rgba(15,36,25,.18);border-radius:50%;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10' fill='none'%3E%3Cpath d='M2 4l3 3 3-3' stroke='rgba(15,36,25,0.45)' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
+  transition:transform .3s;
+}
+.faq-item.open .faq-q::after{transform:rotate(180deg);}
+.faq-item.open .faq-q{color:#0A1C12;}
+.faq-a{
+  font-size:14px;line-height:1.75;color:rgba(15,36,25,.55);
+  max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s;
+}
+.faq-item.open .faq-a{max-height:300px;padding-bottom:22px;}
+
+/* ═══════════════════════════════════════
+   TESTIMONIALS
+═══════════════════════════════════════ */
+.testi-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;margin-top:64px;
+}
+.testi-card{
+  background:#FFFFFF;border:1.5px solid rgba(15,36,25,.1);
+  border-radius:16px;padding:38px;
+  display:flex;flex-direction:column;transition:all .25s;
+  box-shadow:0 2px 8px rgba(15,36,25,.04);
+}
+.testi-card:hover{
+  border-color:rgba(0,107,79,.22);
+  box-shadow:0 12px 36px rgba(0,107,79,.10);
+  transform:translateY(-3px);
+}
+.testi-qm{
+  font-family:var(--f-display);font-size:52px;font-weight:700;
+  color:var(--green);line-height:.8;margin-bottom:14px;opacity:.5;
+}
+.testi-stars{display:flex;gap:3px;margin-bottom:14px;}
+.testi-stars span{font-size:13px;color:var(--amber);}
+.testi-body{font-size:14.5px;line-height:1.72;color:rgba(15,36,25,.62);flex:1;margin-bottom:24px;}
+.testi-author{display:flex;align-items:center;gap:12px;padding-top:20px;border-top:1px solid rgba(15,36,25,.09);}
+.testi-av{
+  width:40px;height:40px;border-radius:50%;overflow:hidden;
+  border:1.5px solid rgba(15,36,25,.12);flex-shrink:0;
+}
+.testi-av img{width:100%;height:100%;object-fit:cover;}
+.testi-name{font-size:13px;font-weight:700;color:#0A1C12;margin-bottom:2px;}
+.testi-role{font-size:11px;color:rgba(15,36,25,.45);}
+
+/* ═══════════════════════════════════════
+   TEAM
+═══════════════════════════════════════ */
+.team-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:16px;margin-top:64px;
+}
+.team-card{
+  background:#FFFFFF;border:1.5px solid rgba(15,36,25,.1);
+  border-radius:16px;overflow:hidden;transition:all .25s;
+  box-shadow:0 2px 8px rgba(15,36,25,.04);
+}
+.team-card:hover{
+  border-color:rgba(0,107,79,.22);
+  transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,107,79,.12);
+}
+.team-photo{position:relative;overflow:hidden;aspect-ratio:1;}
+.team-photo img{
+  width:100%;height:100%;object-fit:cover;object-position:center top;
+  filter:grayscale(15%);transition:filter .4s,transform .4s;
+}
+.team-card:hover .team-photo img{filter:grayscale(0%);transform:scale(1.05);}
+.team-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,28,18,.88) 0%,transparent 55%);
+  display:flex;align-items:flex-end;justify-content:center;
+  padding:16px;opacity:0;transition:opacity .3s;
+}
+.team-card:hover .team-overlay{opacity:1;}
+.team-socials{display:flex;gap:7px;}
+.tsoc{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.18);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.85);transition:all .2s;
+}
+.tsoc:hover{background:var(--green);border-color:var(--green);color:#fff;}
+.team-info{padding:20px 22px 24px;}
+.team-name{font-family:var(--f-display);font-size:17px;font-weight:600;letter-spacing:-.03em;color:#0A1C12;margin-bottom:3px;}
+.team-role{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:9px;}
+.team-bio{font-size:12.5px;line-height:1.6;color:rgba(15,36,25,.52);}
+
+/* ═══════════════════════════════════════
+   CONTACT
+═══════════════════════════════════════ */
+.cta-hero{
+  background:#0F2419;
+  border-radius:22px;padding:80px;
+  text-align:center;position:relative;overflow:hidden;margin-bottom:72px;
+}
+.cta-hero::before{
+  content:'';position:absolute;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(0,168,120,.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,168,120,.07) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.cta-hero>*{position:relative;z-index:1;}
+.cta-ey{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--green-lt);margin-bottom:20px;
+}
+.cta-ey::before,.cta-ey::after{content:'';width:28px;height:1px;background:rgba(0,168,120,.4);}
+.cta-h2{
+  font-family:var(--f-display);
+  font-size:clamp(32px,4.5vw,58px);font-weight:700;
+  letter-spacing:-.04em;line-height:.98;
+  color:#FFFFFF;margin-bottom:16px;
+}
+.cta-h2 .gc{color:var(--green-lt);}
+.cta-sub{font-size:17px;line-height:1.65;color:rgba(255,255,255,.5);max-width:480px;margin:0 auto 40px;}
+.cta-acts{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;}
+.btn-green-lg{
+  display:inline-flex;align-items:center;gap:9px;
+  background:var(--green-lt);color:#fff;
+  font-family:var(--f-body);font-size:15px;font-weight:700;
+  padding:14px 30px;border-radius:10px;border:none;transition:all .25s;
+}
+.btn-green-lg:hover{background:#00C890;transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,168,120,.35);}
+.btn-out-w{
+  display:inline-flex;align-items:center;gap:9px;
+  background:transparent;color:rgba(255,255,255,.65);
+  font-family:var(--f-body);font-size:15px;font-weight:500;
+  padding:13px 24px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.18);transition:all .25s;
+}
+.btn-out-w:hover{border-color:rgba(255,255,255,.35);color:#fff;}
+
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
+.ci-h3{font-family:var(--f-display);font-size:28px;font-weight:700;letter-spacing:-.04em;color:#0A1C12;margin-bottom:12px;line-height:1.1;}
+.ci-p{font-size:15px;line-height:1.7;color:rgba(15,36,25,.55);margin-bottom:30px;}
+.c-items{display:flex;flex-direction:column;gap:10px;}
+.c-row{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 20px;background:#FFFFFF;border:1.5px solid rgba(15,36,25,.1);border-radius:10px;
+  transition:border-color .2s;
+}
+.c-row:hover{border-color:rgba(0,107,79,.22);}
+.c-ico{
+  width:36px;height:36px;border-radius:9px;
+  background:rgba(0,107,79,.07);border:1px solid rgba(0,107,79,.16);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--green);flex-shrink:0;
+}
+.c-lbl{font-family:var(--f-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(15,36,25,.35);margin-bottom:2px;}
+.c-val{font-size:14px;color:rgba(15,36,25,.65);}
+.c-val a{transition:color .2s;}
+.c-val a:hover{color:var(--green);}
+.contact-form{display:flex;flex-direction:column;gap:14px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-lbl{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(15,36,25,.38);}
+.form-input{
+  background:#FFFFFF;border:1.5px solid rgba(15,36,25,.14);
+  color:#0A1C12;font-family:var(--f-body);font-size:14px;
+  padding:12px 14px;border-radius:9px;outline:none;width:100%;
+  transition:border-color .2s;
+}
+.form-input:focus{border-color:var(--green);}
+.form-input::placeholder{color:rgba(15,36,25,.28);}
+textarea.form-input{min-height:110px;resize:vertical;}
+.form-select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 4l4 4 4-4' stroke='rgba(15,36,25,0.4)' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+.btn-form{
+  align-self:flex-start;
+  display:inline-flex;align-items:center;gap:9px;
+  background:var(--green);color:#fff;
+  font-family:var(--f-body);font-size:14px;font-weight:700;
+  padding:13px 28px;border-radius:9px;border:none;transition:all .2s;
+}
+.btn-form:hover{background:var(--green-lt);box-shadow:0 4px 18px var(--green-glow);}
+
+/* ═══════════════════════════════════════
+   FOOTER — keep dark for strong contrast
+═══════════════════════════════════════ */
+footer{
+  background:#0F2419;border-top:1px solid rgba(0,107,79,.2);
+  padding:72px 52px 40px;
+}
+.footer-inner{max-width:1160px;margin:0 auto;}
+.footer-top{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:56px;
+  padding-bottom:56px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:36px;
+}
+.footer-desc{font-size:14px;line-height:1.7;color:rgba(255,255,255,.38);margin:14px 0 22px;max-width:270px;}
+.footer-email{font-family:var(--f-mono);font-size:12px;color:var(--green-lt);opacity:.85;transition:opacity .2s;}
+.footer-email:hover{opacity:1;}
+.footer-socials{display:flex;gap:8px;margin-top:18px;}
+.fsoc{
+  width:32px;height:32px;border-radius:8px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.4);transition:all .2s;
+}
+.fsoc:hover{background:var(--green);border-color:var(--green);color:#fff;}
+.footer-col h4{font-family:var(--f-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:16px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.footer-col ul li a{font-size:14px;color:rgba(255,255,255,.42);transition:color .2s;}
+.footer-col ul li a:hover{color:#fff;}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+.footer-copy{font-family:var(--f-mono);font-size:11px;color:rgba(255,255,255,.22);letter-spacing:.04em;}
+.footer-legal{display:flex;gap:24px;}
+.footer-legal a{font-family:var(--f-mono);font-size:11px;color:rgba(255,255,255,.22);transition:color .2s;}
+.footer-legal a:hover{color:var(--green-lt);}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media(max-width:1024px){
+  .nav{padding:0 24px;}
+  .nav-links{display:none;}
+  .btn-nav-cta{display:none;}
+  .hamburger{display:flex;}
+  .wrap{padding:0 24px;}
+  .hero{grid-template-columns:1fr;padding:100px 24px 72px;gap:48px;}
+  .hero-right{display:none;}
+  .stakes-grid{grid-template-columns:1fr;}
+  .how-grid{grid-template-columns:1fr 1fr;gap:40px;}
+  .how-grid::before{display:none;}
+  .cap-grid{grid-template-columns:1fr 1fr;}
+  .metrics-grid{grid-template-columns:repeat(2,1fr);}
+  .why-grid{grid-template-columns:1fr;}
+  .serve-grid{grid-template-columns:1fr 1fr;}
+  .case-grid{grid-template-columns:1fr;}
+  .case-stats{flex-direction:row;justify-content:flex-start;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .price-card.featured{transform:scale(1);}
+  .price-card.featured:hover{transform:translateY(-3px);}
+  .testi-grid{grid-template-columns:1fr 1fr;}
+  .team-grid{grid-template-columns:1fr 1fr;}
+  .contact-grid{grid-template-columns:1fr;}
+  .cta-hero{padding:48px 32px;}
+  .case-box{padding:48px 36px;}
+  footer{padding:56px 24px 32px;}
+  .footer-top{grid-template-columns:1fr 1fr;gap:40px;}
+}
+@media(max-width:640px){
+  .hero-h1{font-size:42px;}
+  .how-grid{grid-template-columns:1fr;}
+  .cap-grid{grid-template-columns:1fr;}
+  .metrics-grid{grid-template-columns:1fr 1fr;}
+  .serve-grid{grid-template-columns:1fr;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .testi-grid{grid-template-columns:1fr;}
+  .team-grid{grid-template-columns:1fr 1fr;}
+  .footer-top{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .case-stats{flex-direction:column;}
+}
+@media(max-width:380px){.team-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     NAV
+═══════════════════════════════════════ -->
+<nav class="nav" id="nav">
+  <a href="#top" class="nav-logo">
+    <!-- Custom Logo: Bridge arch + neural eye -->
+    <svg class="logo-svg-wrap" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Bridge arch -->
+      <path d="M4 28 Q4 12 19 12 Q34 12 34 28" stroke="#00E5A0" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Bridge deck -->
+      <line x1="2" y1="28" x2="36" y2="28" stroke="#00E5A0" stroke-width="2" stroke-linecap="round"/>
+      <!-- Bridge verticals (hangers) -->
+      <line x1="10" y1="28" x2="10" y2="19" stroke="#00E5A0" stroke-width="1.2" stroke-linecap="round" opacity=".6"/>
+      <line x1="14.5" y1="28" x2="14.5" y2="15" stroke="#00E5A0" stroke-width="1.2" stroke-linecap="round" opacity=".6"/>
+      <line x1="19" y1="28" x2="19" y2="13.5" stroke="#00E5A0" stroke-width="1.2" stroke-linecap="round" opacity=".6"/>
+      <line x1="23.5" y1="28" x2="23.5" y2="15" stroke="#00E5A0" stroke-width="1.2" stroke-linecap="round" opacity=".6"/>
+      <line x1="28" y1="28" x2="28" y2="19" stroke="#00E5A0" stroke-width="1.2" stroke-linecap="round" opacity=".6"/>
+      <!-- AI eye / monitoring lens at apex -->
+      <circle cx="19" cy="10" r="4.5" fill="rgba(0,229,160,.15)" stroke="#00E5A0" stroke-width="1.2"/>
+      <circle cx="19" cy="10" r="2" fill="#006B4F"/>
+      <circle cx="19" cy="10" r=".8" fill="#FFFFFF"/>
+      <!-- Sensor pulses -->
+      <circle cx="19" cy="10" r="6.5" stroke="rgba(0,107,79,.3)" stroke-width=".7" stroke-dasharray="2 2"/>
+    </svg>
+    <span class="logo-wordmark">Civis<span>Intel</span></span>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#capabilities">Platform</a></li>
+    <li><a href="#who">Who We Serve</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+
+  <div class="nav-right">
+    <button class="btn-ghost-nav">Log in</button>
+    <a href="#contact" class="btn-nav-cta">
+      Request a demo
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <ul class="mob-links">
+    <li><a href="#problem"      class="mob-link">The Problem</a></li>
+    <li><a href="#how"          class="mob-link">How It Works</a></li>
+    <li><a href="#capabilities" class="mob-link">Platform</a></li>
+    <li><a href="#why"          class="mob-link">Why CivisIntel</a></li>
+    <li><a href="#who"          class="mob-link">Who We Serve</a></li>
+    <li><a href="#pricing"      class="mob-link">Pricing</a></li>
+    <li><a href="#team"         class="mob-link">Team</a></li>
+    <li><a href="#contact"      class="mob-link">Contact</a></li>
+  </ul>
+  <button class="mob-cta-btn mob-link">Request a demo →</button>
+</div>
+
+<!-- ═══════════════════════════════════════
+     HERO
+═══════════════════════════════════════ -->
+<section id="top">
+<div class="hero">
+
+  <!-- LEFT -->
+  <div class="hero-left">
+    <div class="hero-status rv">
+      <div class="status-ring"><div class="status-dot"></div></div>
+      System active · 12,400+ structures online
+    </div>
+
+    <h1 class="hero-h1 rv d1">
+      Predict structural<br>
+      failures <span class="g">before<br>they happen.</span>
+    </h1>
+    <p class="hero-sub-tag rv d2">Predictive SHM · Public Works Analytics · AI Forecasting</p>
+
+    <p class="hero-p rv d3">
+      CivisIntel processes real-time sensor data from bridges, tunnels, and highways to predict structural failures up to 12 months in advance — giving public works teams time to act before catastrophe strikes.
+    </p>
+
+    <div class="hero-actions rv d4">
+      <a href="#contact" class="btn-primary">
+        Request a demo
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#capabilities" class="btn-outline">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/><polygon points="6,5 11,8 6,11" fill="currentColor"/></svg>
+        See the platform
+      </a>
+    </div>
+
+    <div class="hero-trust rv d5">
+      <span class="trust-chip">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="#006B4F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        98.7% accuracy
+      </span>
+      <span class="trust-chip">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="#006B4F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        FedRAMP · SOC 2
+      </span>
+      <span class="trust-chip">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="#006B4F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        12 months advance notice
+      </span>
+    </div>
+  </div>
+
+  <!-- RIGHT: Live sensor dashboard -->
+  <div class="hero-right rv d3">
+    <div class="sensor-dashboard">
+      <div class="sd-topbar">
+        <div class="sd-dots">
+          <div class="sd-dot sdd-r"></div>
+          <div class="sd-dot sdd-y"></div>
+          <div class="sd-dot sdd-g"></div>
+        </div>
+        <span class="sd-title">civisintel.ai — ops center · region: northeast</span>
+        <div class="sd-live"><div class="sd-live-dot"></div>MONITORING</div>
+      </div>
+
+      <div class="sd-struct-bar">
+        <div class="sd-struct-id">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 10 Q2 4 6 4 Q10 4 10 10" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/><line x1="1" y1="10" x2="11" y2="10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          STRUCT-447B · Roosevelt Bridge, DC
+        </div>
+        <span class="sd-struct-name">SENSOR ARRAY 1 OF 24</span>
+        <span class="sd-health">HEALTH 84%</span>
+      </div>
+
+      <div class="sd-feeds">
+        <!-- Feed 1: Vibration -->
+        <div class="sd-feed">
+          <div class="sd-feed-header">
+            <span class="sd-feed-label">Vibration — CH01</span>
+            <span class="sd-feed-val" style="color:var(--green);">2.14 Hz</span>
+            <span class="sd-feed-status status-normal">Normal</span>
+          </div>
+          <div class="waveform-wrap">
+            <canvas class="waveform-canvas" id="wave1" width="400" height="36"></canvas>
+          </div>
+        </div>
+
+        <!-- Feed 2: Stress -->
+        <div class="sd-feed">
+          <div class="sd-feed-header">
+            <span class="sd-feed-label">Stress — CH02</span>
+            <span class="sd-feed-val" style="color:var(--amber);">187 MPa</span>
+            <span class="sd-feed-status status-elevated">Elevated</span>
+          </div>
+          <div class="waveform-wrap">
+            <canvas class="waveform-canvas" id="wave2" width="400" height="36"></canvas>
+          </div>
+        </div>
+
+        <!-- Feed 3: Displacement -->
+        <div class="sd-feed">
+          <div class="sd-feed-header">
+            <span class="sd-feed-label">Displacement — CH03</span>
+            <span class="sd-feed-val" style="color:var(--green);">+3.2 mm</span>
+            <span class="sd-feed-status status-normal">Normal</span>
+          </div>
+          <div class="waveform-wrap">
+            <canvas class="waveform-canvas" id="wave3" width="400" height="36"></canvas>
+          </div>
+        </div>
+
+        <!-- Feed 4: Temperature -->
+        <div class="sd-feed">
+          <div class="sd-feed-header">
+            <span class="sd-feed-label">Temperature — CH04</span>
+            <span class="sd-feed-val" style="color:var(--green);">14.2°C</span>
+            <span class="sd-feed-status status-normal">Normal</span>
+          </div>
+          <div class="waveform-wrap">
+            <canvas class="waveform-canvas" id="wave4" width="400" height="36"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert -->
+      <div class="sd-alert">
+        <div class="sd-alert-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 13H2L8 2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 7v3M8 11.5v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="sd-alert-title">Predictive Alert — CH02 stress trend</div>
+          <div class="sd-alert-desc">Model projects stress threshold breach in 9.2 months. Maintenance recommended Q3.</div>
+        </div>
+      </div>
+
+      <div class="sd-prediction">
+        <div class="sdp-label">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 6.5l2 2 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Failure prediction window · 98.7% confidence
+        </div>
+        <div class="sdp-val">9.2 months</div>
+      </div>
+    </div>
+
+    <div class="hero-stat-row">
+      <div class="hstat">
+        <div class="hstat-num"><span class="gc">98.7%</span></div>
+        <div class="hstat-lbl">Prediction accuracy</div>
+      </div>
+      <div class="hstat" style="border-left:1px solid var(--border);">
+        <div class="hstat-num"><span class="gc">12.4K+</span></div>
+        <div class="hstat-lbl">Structures monitored</div>
+      </div>
+      <div class="hstat" style="border-left:1px solid var(--border);">
+        <div class="hstat-num"><span class="gc">47%</span></div>
+        <div class="hstat-lbl">Cost reduction</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- Trust strip -->
+<div style="background:#EFF3F7;border-top:1px solid rgba(15,36,25,.09);border-bottom:1px solid rgba(15,36,25,.09);padding:22px 52px;">
+  <div style="max-width:1160px;margin:0 auto;display:flex;align-items:center;gap:52px;flex-wrap:wrap;">
+    <span style="font-family:var(--f-mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:rgba(15,36,25,.35);white-space:nowrap;flex-shrink:0;">Deployed by</span>
+    <div style="display:flex;align-items:center;gap:44px;flex:1;flex-wrap:wrap;">
+      <span style="font-family:var(--f-display);font-size:15px;font-weight:700;color:rgba(15,36,25,.18);">US Dept of Transportation</span>
+      <span style="font-family:var(--f-display);font-size:15px;font-weight:700;color:rgba(15,36,25,.18);">City of Austin</span>
+      <span style="font-family:var(--f-display);font-size:15px;font-weight:700;color:rgba(15,36,25,.18);">Caltrans</span>
+      <span style="font-family:var(--f-display);font-size:15px;font-weight:700;color:rgba(15,36,25,.18);">NYC DOT</span>
+      <span style="font-family:var(--f-display);font-size:15px;font-weight:700;color:rgba(15,36,25,.18);">FHWA</span>
+      <span style="font-family:var(--f-display);font-size:15px;font-weight:700;color:rgba(15,36,25,.18);">Army Corps of Engineers</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     THE PROBLEM / STAKES
+═══════════════════════════════════════ -->
+<section id="problem" class="stakes-sec sec-pad">
+  <div class="wrap">
+    <div class="eyebrow eyebrow-lt rv">The problem</div>
+    <h2 class="sh2 rv d1">The US has <span class="ga">42,000 structurally<br>deficient bridges.</span> Most cities<br>don't know which ones.</h2>
+    <p class="ssub rv d2">Reactive inspection cycles and spreadsheet-based maintenance scheduling are failing public infrastructure — and the public.</p>
+
+    <div class="stakes-grid">
+      <div class="stakes-panel before rv d1">
+        <div class="stakes-tag">// Without CivisIntel</div>
+        <div class="stakes-items">
+          <div class="stakes-item">
+            <div class="si-icon si-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            Inspections happen every 2 years — structural degradation can progress to critical failure in months
+          </div>
+          <div class="stakes-item">
+            <div class="si-icon si-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            Emergency repairs cost 3–7× more than planned interventions — and close infrastructure without warning
+          </div>
+          <div class="stakes-item">
+            <div class="si-icon si-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            Maintenance budgets allocated by political priority, not data — the most dangerous structures aren't always first in line
+          </div>
+          <div class="stakes-item">
+            <div class="si-icon si-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            Catastrophic failures — like the FIU pedestrian bridge and Minneapolis I-35 collapse — with zero advance warning
+          </div>
+          <div class="stakes-item">
+            <div class="si-icon si-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            Weather and load events create unmonitored stress — invisible between inspection cycles
+          </div>
+        </div>
+      </div>
+      <div class="stakes-panel after rv d2">
+        <div class="stakes-tag">// With CivisIntel deployed</div>
+        <div class="stakes-items">
+          <div class="stakes-item">
+            <div class="si-icon si-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            Continuous 24/7 sensor monitoring with millisecond data resolution — no blind spots between inspections
+          </div>
+          <div class="stakes-item">
+            <div class="si-icon si-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            Failure predictions issued up to 12 months in advance — time to plan, budget, and execute safely
+          </div>
+          <div class="stakes-item">
+            <div class="si-icon si-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            AI-ranked priority maintenance queue — objective, data-driven, and defensible in public budget hearings
+          </div>
+          <div class="stakes-item">
+            <div class="si-icon si-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            Average 47% reduction in maintenance costs through targeted proactive intervention
+          </div>
+          <div class="stakes-item">
+            <div class="si-icon si-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            Weather and load events automatically factored into prediction models — in real time
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     HOW IT WORKS
+═══════════════════════════════════════ -->
+<section id="how" style="padding:108px 0;background:#F8FAFB;border-top:1px solid rgba(15,36,25,.08);">
+  <div class="wrap">
+    <div style="text-align:center;margin-bottom:0;">
+      <div class="eyebrow rv" style="justify-content:center;">Process</div>
+      <h2 class="sh2 rv d1" style="text-align:center;">From raw sensor data to<br><span class="gc">actionable prediction</span></h2>
+      <p class="ssub rv d2" style="margin:0 auto;text-align:center;">Four stages — running continuously, 24 hours a day, across every monitored structure.</p>
+    </div>
+
+    <div class="how-grid">
+      <div class="how-step rv d1">
+        <div class="how-bubble">1</div>
+        <div class="how-title">Connect sensors</div>
+        <div class="how-desc">Integrate existing IoT sensor networks or deploy CivisIntel-compatible devices. Supports vibration, strain, temperature, displacement, and crack sensors from all major manufacturers.</div>
+      </div>
+      <div class="how-step rv d2">
+        <div class="how-bubble">2</div>
+        <div class="how-title">Stream &amp; process data</div>
+        <div class="how-desc">Sensor data streams at millisecond resolution into the CivisIntel platform — edge-processed locally, then aggregated to our AI inference engine in under 50ms.</div>
+      </div>
+      <div class="how-step rv d3">
+        <div class="how-bubble">3</div>
+        <div class="how-title">AI prediction engine</div>
+        <div class="how-desc">Deep learning models trained on 60+ years of structural failure data analyse live readings, detect anomalies, and forecast failure probability across configurable time horizons.</div>
+      </div>
+      <div class="how-step rv d4">
+        <div class="how-bubble">4</div>
+        <div class="how-title">Alert, report, optimise</div>
+        <div class="how-desc">Ranked alerts, maintenance recommendations, and budget optimisation reports delivered to your team — with enough lead time to plan, fund, and execute safely.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     CAPABILITIES
+═══════════════════════════════════════ -->
+<section id="capabilities" style="padding:108px 0;background:#FFFFFF;border-top:1px solid rgba(15,36,25,.08);">
+  <div class="wrap">
+    <div class="eyebrow rv">Platform capabilities</div>
+    <h2 class="sh2 rv d1">End-to-end structural<br>intelligence, <span class="gc">on one platform</span></h2>
+    <p class="ssub rv d2">Six integrated modules — sensor ingestion to budget report — no third-party stitching required.</p>
+
+    <div class="cap-grid">
+      <div class="cap-card rv d1" data-id="SHM-01">
+        <div class="cap-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 14 Q3 6 10 6 Q17 6 17 14" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><line x1="1" y1="14" x2="19" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="14" x2="6" y2="10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".6"/><line x1="10" y1="14" x2="10" y2="7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".6"/><line x1="14" y1="14" x2="14" y2="10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".6"/></svg></div>
+        <div class="cap-title">Structural Monitoring</div>
+        <div class="cap-desc">Real-time analysis of vibrations, stress, strain, and displacement across all structural elements. Baseline deviation alerts trigger automatically when thresholds are exceeded.</div>
+        <div class="cap-tag ct-green">24/7 live feed · &lt;50ms latency</div>
+      </div>
+      <div class="cap-card rv d2" data-id="PRED-02">
+        <div class="cap-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 15L6 9l4 4 4-8 4 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="5" r="2.5" stroke="currentColor" stroke-width="1.2"/></svg></div>
+        <div class="cap-title">Predictive Analytics</div>
+        <div class="cap-desc">AI algorithms trained on 60+ years of structural failure data generate failure probability forecasts at 1, 3, 6, and 12-month horizons, with 98.7% accuracy.</div>
+        <div class="cap-tag ct-cobalt">98.7% accuracy · 12-month horizon</div>
+      </div>
+      <div class="cap-card rv d3" data-id="WX-03">
+        <div class="cap-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M14 9A4 4 0 0 0 7 7.5a3 3 0 1 0 0 6H14a2.5 2.5 0 0 0 0-5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 16l1 2M6 16l1 2M14 16l1 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="cap-title">Weather &amp; Load Integration</div>
+        <div class="cap-desc">Automatically correlates structural sensor readings with live weather data, seismic activity, and traffic load patterns — so predictions account for real environmental forces.</div>
+        <div class="cap-tag ct-cobalt">Live NOAA + USGS integration</div>
+      </div>
+      <div class="cap-card rv d4" data-id="BUDG-04">
+        <div class="cap-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M3 8h14" stroke="currentColor" stroke-width="1.2"/><path d="M7 12h2M11 12h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+        <div class="cap-title">Budget Optimisation</div>
+        <div class="cap-desc">AI-ranked maintenance priority queues with cost estimates, intervention windows, and ROI projections — built for public budget hearings and federal reporting requirements.</div>
+        <div class="cap-tag ct-amber">Avg. 47% cost reduction</div>
+      </div>
+      <div class="cap-card rv d5" data-id="RPT-05">
+        <div class="cap-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 4h8l4 4v8H4V4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 4v4h4" stroke="currentColor" stroke-width="1.3"/><path d="M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="cap-title">Automated Reporting</div>
+        <div class="cap-desc">Compliance-ready health reports generated automatically — formatted for FHWA, AASHTO, and state-level inspection reporting. Shareable with engineers, planners, and regulators in one click.</div>
+        <div class="cap-tag ct-green">FHWA · AASHTO compliant</div>
+      </div>
+      <div class="cap-card rv d6" data-id="COLLAB-06">
+        <div class="cap-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="5" cy="10" r="2.5" stroke="currentColor" stroke-width="1.4"/><circle cx="15" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4"/><circle cx="15" cy="15" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M7.5 9L12.5 6M7.5 11L12.5 14" stroke="currentColor" stroke-width="1.2"/></svg></div>
+        <div class="cap-title">Multi-Agency Collaboration</div>
+        <div class="cap-desc">Shared dashboards for city engineers, public works teams, federal inspectors, and contractors — with role-based access control and a full audit trail for regulatory accountability.</div>
+        <div class="cap-tag ct-green">FedRAMP · SOC 2 · FISMA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     WHY + METRICS
+═══════════════════════════════════════ -->
+<section id="why" class="metrics-outer sec-pad">
+  <div class="wrap">
+    <div style="text-align:center;">
+      <div class="eyebrow eyebrow-lt rv" style="justify-content:center;">Why CivisIntel</div>
+      <h2 class="sh2 rv d1" style="text-align:center;color:#FFFFFF;">The <span style="color:var(--green-lt);">Civis advantage</span></h2>
+      <p class="ssub rv d2" style="margin:0 auto;text-align:center;color:rgba(255,255,255,.45);">What makes CivisIntel the platform that infrastructure directors trust with critical decisions.</p>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-item rv d1"><div class="m-num">98<span class="gc">.7%</span></div><div class="m-lbl">Prediction accuracy</div></div>
+      <div class="metric-item rv d2"><div class="m-num">12<span class="gc"> mo.</span></div><div class="m-lbl">Max advance warning</div></div>
+      <div class="metric-item rv d3"><div class="m-num">47<span class="gc">%</span></div><div class="m-lbl">Avg. maintenance cost reduction</div></div>
+      <div class="metric-item rv d4"><div class="m-num">12<span class="gc">K+</span></div><div class="m-lbl">Structures currently monitored</div></div>
+    </div>
+
+    <div class="why-grid">
+      <div class="why-card rv d1">
+        <div class="why-idx">01</div>
+        <div>
+          <div class="why-title">Unmatched prediction accuracy</div>
+          <div class="why-desc">98.7% accuracy from proprietary deep learning models trained on 60+ years of real structural failure data — across bridge types, geographies, traffic loads, and climate conditions. Not a general-purpose model retrofitted to infrastructure.</div>
+        </div>
+      </div>
+      <div class="why-card rv d2">
+        <div class="why-idx">02</div>
+        <div>
+          <div class="why-title">12 months of lead time</div>
+          <div class="why-desc">Most structural monitoring systems trigger alerts hours or days before failure. CivisIntel's predictive window gives public works teams up to 12 months — enough time to budget, plan, bid, and intervene safely.</div>
+        </div>
+      </div>
+      <div class="why-card rv d3">
+        <div class="why-idx">03</div>
+        <div>
+          <div class="why-title">Data-driven budget defence</div>
+          <div class="why-desc">When public works directors present maintenance budgets to city councils, CivisIntel's AI-ranked priority reports provide objective, auditable evidence for every dollar requested — replacing political guesswork with structural data.</div>
+        </div>
+      </div>
+      <div class="why-card rv d4">
+        <div class="why-idx">04</div>
+        <div>
+          <div class="why-title">Continuous learning across the network</div>
+          <div class="why-desc">Every sensor reading, every maintenance outcome, and every confirmed prediction strengthens the model — across all 12,400+ structures. Your bridge benefits from the data of every other bridge in the network.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     WHO WE SERVE
+═══════════════════════════════════════ -->
+<section id="who" style="padding:108px 0;background:#F8FAFB;border-top:1px solid rgba(15,36,25,.08);">
+  <div class="wrap">
+    <div class="eyebrow rv">Who we serve</div>
+    <h2 class="sh2 rv d1">Built for every agency<br>that <span class="gc">maintains public infrastructure</span></h2>
+    <p class="ssub rv d2">From single-city deployments to federal-scale networks spanning thousands of structures.</p>
+
+    <div class="serve-grid">
+      <div class="serve-card rv d1">
+        <div class="serve-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 18V8L10 3l7 5v10" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><rect x="7" y="11" width="6" height="7" stroke="currentColor" stroke-width="1.3"/><path d="M3 10h14" stroke="currentColor" stroke-width="1" opacity=".4"/></svg></div>
+        <div class="serve-title">City &amp; Municipal Governments</div>
+        <div class="serve-desc">Urban infrastructure management for bridges, overpasses, public buildings, retaining walls, and drainage systems across city road networks.</div>
+        <div class="serve-chip">→ Full city deployment</div>
+      </div>
+      <div class="serve-card rv d2">
+        <div class="serve-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 12h16M6 12V8M10 12V6M14 12V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2 16h16" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+        <div class="serve-title">State Transportation Departments</div>
+        <div class="serve-desc">Highway, tunnel, and transit infrastructure monitoring across state road networks — with FHWA-compliant reporting and federal grant documentation support.</div>
+        <div class="serve-chip">→ FHWA compliant</div>
+      </div>
+      <div class="serve-card rv d3">
+        <div class="serve-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 14 Q3 6 10 6 Q17 6 17 14" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><line x1="1" y1="14" x2="19" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="serve-title">Water &amp; Utilities</div>
+        <div class="serve-desc">Dam, levee, and water treatment facility structural health monitoring — including seepage detection, embankment stability, and hydrostatic pressure analysis.</div>
+        <div class="serve-chip">→ Dam · Levee · Treatment</div>
+      </div>
+      <div class="serve-card rv d4">
+        <div class="serve-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3l7 4v6l-7 4-7-4V7l7-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+        <div class="serve-title">Federal Agencies</div>
+        <div class="serve-desc">Federal, state, and local agencies managing critical national infrastructure — with FedRAMP authorization, FISMA compliance, and inter-agency data sharing capabilities.</div>
+        <div class="serve-chip">→ FedRAMP · FISMA</div>
+      </div>
+      <div class="serve-card rv d5">
+        <div class="serve-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 4h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5"/><path d="M7 13v3M10 13v3M13 13v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="serve-title">Engineering &amp; Consulting Firms</div>
+        <div class="serve-desc">Structural engineers and consulting firms advising public-sector clients — use CivisIntel's API to embed predictive analytics in your own deliverables.</div>
+        <div class="serve-chip">→ API-first integration</div>
+      </div>
+      <div class="serve-card rv d6">
+        <div class="serve-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v4l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+        <div class="serve-title">Public Works Departments</div>
+        <div class="serve-desc">Day-to-day maintenance planning and budget optimisation for public works teams — with mobile-first dashboards for field engineers and inspectors.</div>
+        <div class="serve-chip">→ Mobile field app</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     CASE STUDY
+═══════════════════════════════════════ -->
+<section style="padding:108px 0;background:#FFFFFF;border-top:1px solid rgba(15,36,25,.08);">
+  <div class="wrap">
+    <div class="eyebrow rv">Case study</div>
+    <h2 class="sh2 rv d1">How the City of Austin predicted<br>a critical bridge failure <span class="gc">8 months early</span></h2>
+
+    <div class="case-box rv d2">
+      <div class="case-grid">
+        <div>
+          <p class="case-quote">"CivisIntel flagged a developing fatigue crack in a load-bearing element 8 months before our scheduled inspection would have caught it. We repaired it on a planned weekend closure for $840K. An emergency closure and reactive repair would have cost over $12M — and we'd have had no control over the timing."</p>
+          <div class="case-attr">
+            <div class="case-av">RC</div>
+            <div>
+              <div class="case-name">Robert Chen</div>
+              <div class="case-role">Director of Public Works, City of Austin</div>
+            </div>
+          </div>
+        </div>
+        <div class="case-stats">
+          <div>
+            <div class="cs-stat-num">$12M</div>
+            <div class="cs-stat-lbl">Emergency repair cost avoided</div>
+          </div>
+          <div>
+            <div class="cs-stat-num">8 mo.</div>
+            <div class="cs-stat-lbl">Advance prediction window</div>
+          </div>
+          <div>
+            <div class="cs-stat-num">0</div>
+            <div class="cs-stat-lbl">Unplanned closures</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     TESTIMONIALS
+═══════════════════════════════════════ -->
+<section id="testimonials" style="padding:108px 0;background:#EFF3F7;border-top:1px solid rgba(15,36,25,.08);">
+  <div class="wrap">
+    <div class="eyebrow rv">Reviews</div>
+    <h2 class="sh2 rv d1">What infrastructure leaders <span class="gc">say</span></h2>
+    <p class="ssub rv d2">Real feedback from public works directors, engineers, and agency chiefs who've deployed CivisIntel.</p>
+
+    <div class="testi-grid">
+      <div class="testi-card rv d1">
+        <div class="testi-qm">"</div>
+        <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+        <p class="testi-body">"CivisIntel predicted a critical bridge failure 8 months in advance. We executed a planned repair for $840K instead of a $12M emergency closure. It's the most important software decision I've made in 20 years in public works."</p>
+        <div class="testi-author">
+          <div><div class="testi-name">Rubben</div><div class="testi-role">Director of Public Works, City of Austin</div></div>
+        </div>
+      </div>
+      <div class="testi-card rv d2">
+        <div class="testi-qm">"</div>
+        <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+        <p class="testi-body">"We've reduced maintenance costs by 42% while improving safety ratings across the district. CivisIntel's priority ranking made our budget hearings faster and our decisions defensible in ways a spreadsheet never could."</p>
+        <div class="testi-author">
+          <div><div class="testi-name">Sarah</div><div class="testi-role">Chief Engineer, Caltrans District 7</div></div>
+        </div>
+      </div>
+      <div class="testi-card rv d3">
+        <div class="testi-qm">"</div>
+        <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+        <p class="testi-body">"In 18 months of deployment across 340 NYC structures, CivisIntel surfaced 17 developing issues before they met visual inspection thresholds. That's 17 potential headlines avoided. This is what infrastructure management looks like in 2026."</p>
+        <div class="testi-author">
+          <div><div class="testi-name">Okafor</div><div class="testi-role">Infrastructure Director, NYC DOT</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     PRICING
+═══════════════════════════════════════ -->
+<section id="pricing" style="padding:108px 0;background:#FFFFFF;border-top:1px solid rgba(15,36,25,.08);">
+  <div class="wrap">
+    <div style="text-align:center;">
+      <div class="eyebrow rv" style="justify-content:center;">Pricing</div>
+      <h2 class="sh2 rv d1" style="text-align:center;">Priced per structure,<br><span class="gc">not per user</span></h2>
+      <p class="ssub rv d2" style="margin:0 auto;text-align:center;">Simple, transparent pricing that scales with your infrastructure portfolio.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="price-card rv d1">
+        <div class="price-tier">Pilot</div>
+        <div class="price-amt"><span class="price-curr">$</span><span class="price-num">0</span><span class="price-per">/month</span></div>
+        <div class="price-desc">For cities and agencies evaluating CivisIntel on a small portfolio before a full rollout.</div>
+        <ul class="price-feats">
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Up to 10 structures</li>
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Real-time sensor dashboard</li>
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>3-month prediction horizon</li>
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Email &amp; CSV reports</li>
+        </ul>
+        <button class="btn-price btn-price-out">Start pilot</button>
+      </div>
+
+      <div class="price-card featured rv d2">
+        <div class="pop-badge">Most popular</div>
+        <div class="price-tier">City</div>
+        <div class="price-amt"><span class="price-curr" style="color:rgba(238,244,255,.4)">$</span><span class="price-num">4,200</span><span class="price-per">/month</span></div>
+        <div class="price-desc">For municipal governments managing a full urban infrastructure portfolio.</div>
+        <ul class="price-feats">
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Up to 500 structures</li>
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Full 12-month prediction horizon</li>
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Budget optimisation module</li>
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>FHWA-compliant reporting</li>
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Multi-agency collaboration</li>
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Priority support + onboarding</li>
+        </ul>
+        <button class="btn-price btn-price-fill">Request a demo</button>
+      </div>
+
+      <div class="price-card rv d3">
+        <div class="price-tier">State / Federal</div>
+        <div class="price-amt"><span class="price-num" style="font-size:36px;">Custom</span></div>
+        <div class="price-desc">For state DOTs, federal agencies, and large-scale deployments across thousands of structures.</div>
+        <ul class="price-feats">
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Unlimited structures</li>
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Dedicated isolated deployment</li>
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>FedRAMP · FISMA · CJIS</li>
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Custom API integrations</li>
+          <li class="price-feat"><div class="pf-ck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Dedicated engineering support</li>
+        </ul>
+        <button class="btn-price btn-price-out">Talk to us</button>
+      </div>
+    </div>
+
+    <p style="text-align:center;font-size:12px;color:rgba(15,36,25,.35);margin-top:28px;font-family:var(--f-mono);">GSA Schedule pricing available for federal procurement · All plans include 30-day pilot period</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     TEAM
+═══════════════════════════════════════ -->
+<section id="team" style="padding:108px 0;background:#F8FAFB;border-top:1px solid rgba(15,36,25,.08);">
+  <div class="wrap">
+    <div class="eyebrow rv">The team</div>
+    <h2 class="sh2 rv d1">The minds behind <span class="gc">CivisIntel</span></h2>
+    <p class="ssub rv d2">AI researchers, structural engineers, and public works veterans who've spent careers studying why infrastructure fails — and building the technology to prevent it.</p>
+
+    <div class="team-grid">
+      <div class="team-card rv d1">
+        <div class="team-photo">
+          <img src="Img/IMG-20250901-WA0037.jpg" alt="Dr. Michael Thompson">
+          <div class="team-overlay">
+            <div class="team-socials">
+              <a href="#" class="tsoc" aria-label="LinkedIn"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+              <a href="#" class="tsoc" aria-label="Twitter / X"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+              <a href="#" class="tsoc" aria-label="Google Scholar"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M5.242 13.769L0 9.5 12 1l12 8.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/></svg></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-info">
+          <div class="team-name">Dr. M</div>
+          <div class="team-role">CEO &amp; Co-Founder</div>
+          <div class="team-bio">Ex-IBM Watson. PhD in AI. 20+ years in predictive analytics and critical infrastructure systems.</div>
+        </div>
+      </div>
+
+      <div class="team-card rv d2">
+        <div class="team-photo">
+          <img src="Img/IMG-20250901-WA0049.jpg" alt="Elena Rodriguez">
+          <div class="team-overlay">
+            <div class="team-socials">
+              <a href="#" class="tsoc" aria-label="LinkedIn"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+              <a href="#" class="tsoc" aria-label="Twitter / X"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+              <a href="#" class="tsoc" aria-label="GitHub"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-info">
+          <div class="team-name">E</div>
+          <div class="team-role">CTO &amp; Co-Founder</div>
+          <div class="team-bio">Former Principal Engineer at Arup. Structural engineering and IoT systems expert with 12 years in infrastructure monitoring.</div>
+        </div>
+      </div>
+
+      <div class="team-card rv d3">
+        <div class="team-photo">
+          <img src="Img/IMG-20250901-WA0051.jpg" alt="David Kim">
+          <div class="team-overlay">
+            <div class="team-socials">
+              <a href="#" class="tsoc" aria-label="LinkedIn"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+              <a href="#" class="tsoc" aria-label="Google Scholar"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M5.242 13.769L0 9.5 12 1l12 8.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/></svg></a>
+              <a href="#" class="tsoc" aria-label="Twitter / X"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-info">
+          <div class="team-name">D</div>
+          <div class="team-role">Head of AI Research</div>
+          <div class="team-bio">PhD in Machine Learning. Published in Nature &amp; ASCE journals. Structural health monitoring specialist with a focus on fatigue fracture prediction.</div>
+        </div>
+      </div>
+
+      <div class="team-card rv d4">
+        <div class="team-photo">
+          <img src="Img/IMG-20250901-WA0052.jpg" alt="Lisa Martinez">
+          <div class="team-overlay">
+            <div class="team-socials">
+              <a href="#" class="tsoc" aria-label="LinkedIn"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+              <a href="#" class="tsoc" aria-label="Twitter / X"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+              <a href="#" class="tsoc" aria-label="Email"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M2 7l10 7 10-7" stroke="currentColor" stroke-width="1.8"/></svg></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-info">
+          <div class="team-name">L</div>
+          <div class="team-role">Head of Public Works</div>
+          <div class="team-bio">Former city engineer with 25+ years in infrastructure planning. The policy and procurement expert who makes CivisIntel work inside government.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FAQ
+═══════════════════════════════════════ -->
+<section id="faq" style="padding:108px 0;background:#FFFFFF;border-top:1px solid rgba(15,36,25,.08);">
+  <div class="wrap">
+    <div class="eyebrow rv">FAQ</div>
+    <h2 class="sh2 rv d1">Common questions from<br><span class="gc">public works teams</span></h2>
+    <p class="ssub rv d2">The questions infrastructure directors ask before deployment.</p>
+
+    <div class="faq-list rv d2">
+      <div class="faq-item">
+        <div class="faq-q">How does CivisIntel connect to existing sensor infrastructure?</div>
+        <div class="faq-a">CivisIntel integrates with all major IoT sensor protocols including MQTT, OPC-UA, REST, and proprietary formats from manufacturers like National Instruments, HBK, and Micro-Epsilon. For new deployments, we support a CivisIntel-certified sensor kit that can be installed by any licensed electrician without structural modification.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What does 98.7% accuracy actually mean in practice?</div>
+        <div class="faq-a">It means that in backtesting against 60+ years of historical structural failure events, CivisIntel's models correctly predicted 98.7% of failures within the forecast window — with a false positive rate below 4%. Every prediction includes a confidence interval and the specific sensor signatures driving it, so your engineers can validate the reasoning before acting.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is the platform FedRAMP authorized?</div>
+        <div class="faq-a">CivisIntel is currently FedRAMP Moderate-authorized for federal agency use and is in the process of achieving FedRAMP High authorization. All data is processed and stored within US-based infrastructure, with full FISMA compliance and optional air-gapped deployment for sensitive national infrastructure.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How long does deployment take?</div>
+        <div class="faq-a">For agencies with existing sensor networks, CivisIntel can be live in 48–72 hours. Full deployments including sensor installation, baseline calibration, and staff training typically complete in 4–6 weeks. We assign a dedicated deployment engineer to every government client at no additional cost.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can we procure CivisIntel through GSA Schedule?</div>
+        <div class="faq-a">Yes. CivisIntel is listed on GSA Schedule 70 (IT Services) and eligible for procurement through SAM.gov cooperative purchasing. Our team can provide all documentation required for sole-source justification for municipalities and state agencies.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     CONTACT
+═══════════════════════════════════════ -->
+<section id="contact" style="padding:108px 0;background:#EFF3F7;border-top:1px solid rgba(15,36,25,.08);">
+  <div class="wrap">
+    <div class="cta-hero rv">
+      <div class="cta-ey">Start protecting infrastructure</div>
+      <h2 class="cta-h2">Know before the<br><span class="gc">failure happens.</span></h2>
+      <p class="cta-sub">Start a free 10-structure pilot. No procurement barrier, no sensors required upfront. See a live prediction in 48 hours.</p>
+      <div class="cta-acts">
+        <a href="#" class="btn-green-lg">
+          Start a free pilot
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#" class="btn-out-w">Download data sheet</a>
+      </div>
+    </div>
+
+    <div class="contact-grid">
+      <div>
+        <div class="eyebrow rv">Let's talk</div>
+        <h3 class="ci-h3 rv d1">Tell us about your<br>infrastructure portfolio.</h3>
+        <p class="ci-p rv d2">Whether you're managing 20 bridges or 2,000 highway miles, our engineers will scope the right deployment and walk you through what CivisIntel would predict — before you sign anything.</p>
+        <div class="c-items rv d3">
+          <div class="c-row">
+            <div class="c-ico"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="3" width="13" height="10" rx="1.2" stroke="currentColor" stroke-width="1.3"/><path d="M1 5.5l6.5 4.5L14 5.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
+            <div><div class="c-lbl">Email</div><div class="c-val"><a href="mailto:hello@civisintel.ai">hello@civisintel.ai</a></div></div>
+          </div>
+          <div class="c-row">
+            <div class="c-ico"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M12.5 9.5l-2.5-.5-1.5 1.5a9.5 9.5 0 0 1-4.5-4.5L5.5 4.5 5 2H2.5C2 7.5 7.5 13 13 12.5V10z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+            <div><div class="c-lbl">Phone</div><div class="c-val">+1 (800) 555-CIVIS</div></div>
+          </div>
+          <div class="c-row">
+            <div class="c-ico"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2C5.3 2 3.5 3.8 3.5 6c0 3.5 4 7 4 7s4-3.5 4-7c0-2.2-1.8-4-4-4z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="6" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg></div>
+            <div><div class="c-lbl">Office</div><div class="c-val">500 Innovation Drive, Washington D.C., 20001</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form rv d2">
+        <div class="form-row">
+          <div class="form-group"><label class="form-lbl">First name</label><input class="form-input" type="text" placeholder="Robert"></div>
+          <div class="form-group"><label class="form-lbl">Last name</label><input class="form-input" type="text" placeholder="Chen"></div>
+        </div>
+        <div class="form-group"><label class="form-lbl">Work email</label><input class="form-input" type="email" placeholder="robert@austintexas.gov"></div>
+        <div class="form-group"><label class="form-lbl">Agency / Organisation</label><input class="form-input" type="text" placeholder="City of Austin Public Works"></div>
+        <div class="form-group">
+          <label class="form-lbl">Sector</label>
+          <select class="form-input form-select">
+            <option value="" disabled selected>Select your sector</option>
+            <option>City &amp; Municipal Government</option>
+            <option>State Transportation Department</option>
+            <option>Water &amp; Utilities</option>
+            <option>Federal Agency</option>
+            <option>Engineering / Consulting Firm</option>
+            <option>Public Works Department</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-lbl">Message</label><textarea class="form-input" placeholder="Tell us about your infrastructure portfolio — number of structures, types, and what you're hoping to solve with CivisIntel…"></textarea></div>
+        <button class="btn-form">
+          Send message
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <a href="#top" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:4px;">
+          <svg width="32" height="32" viewBox="0 0 38 38" fill="none">
+            <path d="M4 28 Q4 12 19 12 Q34 12 34 28" stroke="#00E5A0" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8"/>
+            <line x1="2" y1="28" x2="36" y2="28" stroke="#00A878" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+            <line x1="10" y1="28" x2="10" y2="19" stroke="#00A878" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>
+            <line x1="19" y1="28" x2="19" y2="13.5" stroke="#00A878" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>
+            <line x1="28" y1="28" x2="28" y2="19" stroke="#00A878" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>
+            <circle cx="19" cy="10" r="3.5" fill="rgba(0,107,79,.25)" stroke="#00A878" stroke-width="1"/>
+            <circle cx="19" cy="10" r="1.5" fill="#00A878"/>
+          </svg>
+          <span class="logo-wordmark" style="font-size:17px;">Civis<span>Intel</span></span>
+        </a>
+        <p class="footer-desc">Predictive structural health monitoring and public works analytics. Know before the failure happens.</p>
+        <a href="mailto:hello@civisintel.ai" class="footer-email">hello@civisintel.ai</a>
+        <div class="footer-socials">
+          <a href="#" class="fsoc" aria-label="Twitter/X"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" class="fsoc" aria-label="LinkedIn"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="#" class="fsoc" aria-label="YouTube"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.4a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0F2419"/></svg></a>
+          <a href="#" class="fsoc" aria-label="GitHub"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="#problem">The Problem</a></li>
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#capabilities">Capabilities</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#">Documentation</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#team">Team</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal &amp; Compliance</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Security (FedRAMP)</a></li>
+          <li><a href="#">GSA Schedule</a></li>
+          <li><a href="#">FISMA Compliance</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 CivisIntel, Inc. · All rights reserved. · Washington D.C.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Security</a>
+        <a href="#">FedRAMP</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════ -->
+<script>
+/* ── NAV ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+/* ── HAMBURGER ── */
+const ham = document.getElementById('hamburger');
+const mob = document.getElementById('mobile-menu');
+ham.addEventListener('click', () => {
+  const open = ham.classList.toggle('open');
+  mob.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+document.querySelectorAll('.mob-link').forEach(l => {
+  l.addEventListener('click', () => {
+    ham.classList.remove('open');
+    mob.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+document.querySelector('.mob-cta-btn').addEventListener('click', () => {
+  ham.classList.remove('open');
+  mob.classList.remove('open');
+  document.body.style.overflow = '';
+  document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+});
+
+/* ── WAVEFORM CANVASES ── */
+function drawWaveform(canvasId, color, freq, ampMult, noiseAmp, isAlert) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  let t = 0;
+
+  function draw() {
+    t += 0.04;
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.beginPath();
+    ctx.moveTo(0, H / 2);
+
+    for (let x = 0; x < W; x++) {
+      const norm = x / W;
+      const noise = (Math.random() - 0.5) * noiseAmp;
+      const wave1 = Math.sin(norm * Math.PI * freq - t) * ampMult;
+      const wave2 = Math.sin(norm * Math.PI * freq * 1.7 - t * 1.3) * ampMult * 0.35;
+      const y = H / 2 + wave1 + wave2 + noise;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = isAlert ? 6 : 3;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// Vibration — brand green, steady
+drawWaveform('wave1', 'rgba(0,107,79,0.75)', 8, 8, 0.5, false);
+// Stress — amber, slightly elevated
+drawWaveform('wave2', 'rgba(217,119,6,0.85)', 5, 12, 1.5, true);
+// Displacement — brand green, slow
+drawWaveform('wave3', 'rgba(0,107,79,0.65)', 3, 6, 0.3, false);
+// Temperature — cobalt, very slow
+drawWaveform('wave4', 'rgba(29,78,216,0.65)', 2, 5, 0.2, false);
+
+/* ── FAQ ── */
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+
+/* ── REVEAL ── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.07, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
